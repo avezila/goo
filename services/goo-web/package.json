@@ -1,0 +1,61 @@
+{
+  "name": "Goo-client",
+  "description": "Web client for Goo short urls service",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/avezila/goo.git"
+  },
+  "license": "MIT",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "devDependencies": {
+    "babel-core": "*",
+    "babel-eslint": "*",
+    "babel-loader": "*",
+    "css-loader": "*",
+    "postcss-loader": "*",
+    "eslint": "*",
+    "eslint-plugin-react": "*",
+    "extract-text-webpack-plugin": "*",
+    "html-webpack-plugin": "*",
+    "react-hot-loader": "*",
+    "redux-devtools": "*",
+    "style-loader": "*",
+    "sass-loader": "*",
+    "precss": "*",
+    "node-sass": "*",
+    "autoprefixer": "*",
+    "webpack": "*",
+    "webpack-dev-server": "*"
+  },
+  "dependencies": {
+    "babel-plugin-transform-class-properties": "*",
+    "babel-plugin-transform-decorators-legacy": "*",
+    "babel-preset-es2015": "*",
+    "babel-preset-es2016": "*",
+    "babel-preset-react": "*",
+    "babel-preset-stage-0": "*",
+    "bytebuffer": "*",
+    "classnames": "*",
+    "history": "*",
+    "lodash": "*",
+    "material-ui": "*",
+    "protobufjs": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-redux": "*",
+    "react-router": "*",
+    "react-router-redux": "*",
+    "react-tap-event-plugin": "*",
+    "react-tools": "*",
+    "react-transform": "*",
+    "redux": "*",
+    "redux-localstorage": "*",
+    "redux-logger": "*",
+    "redux-router": "*",
+    "redux-thunk": "*",
+    "susy": "*"
+  }
+}

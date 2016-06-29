@@ -1,0 +1,39 @@
+version : '2'
+
+services:
+  saver:
+    image : avezila/saver
+    ports:
+      - "5353:5353"
+    depends_on:
+      - saver-mongo
+    links:
+      - saver-mongo
+    volumes:
+      - ../data/saver:/data
+  proxy:
+    image : avezila/saver-proxy
+    ports:
+      - "5354:5354"
+    depends_on:
+      - saver
+    links:
+      - saver
+    volumes:
+      - ../data/proxy:/data
+  saver-mongo:
+    image: avezila/saver-mongo
+    volumes:
+      - ../data/saver-mongo:/data/db
+  saver-client:
+    image: avezila/saver-client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - saver
+      - proxy
+    links:
+      - saver
+      - proxy
+    volumes:
+      - ../data/saver-client:/usr/src/app/data

@@ -1,0 +1,73 @@
+@import "node_modules/susy/sass/susy";
+@include border-box-sizing;
+
+$susy: (
+  columns: 12,
+  container: 1200px,
+  gutters: 1/4,
+  global-box-sizing: border-box,
+);
+
+@include layout($susy float inside);
+
+
+body { 
+  background-color: #E7EBF0;
+  font-family: 'Roboto', sans-serif;
+}
+
+:local(.goo){
+  @include container();
+}
+
+:local(.inputPaper){
+  @include  span(12);
+  padding : 3em;
+  margin-top : 1em;
+}
+:local(.inputSpan) {
+  @include  span(7);
+  padding: 0;
+  padding-right: 10px;
+}
+:local(.input) {
+  padding: 0;
+} 
+:local(.inputSubmit) {
+  @include  span(2);
+  padding: 0;
+  margin-top : 4px;
+}
+
+:local(.header) {
+  @include span(12);
+  padding: 0;
+  margin: 0;
+}
+:local(.header) h3 {
+  @include span(12);
+  background-color: #5682A3;
+  color : white;
+  margin: 0;
+  padding: 1em;
+}
+
+:local(.urlsPaper){
+  @include  span(12);
+  padding : 3em;
+  margin-top : 1em;
+}
+
+:local(.urlsLong) {
+  @include span(8);
+  padding : 1em 0;
+  overflow: hidden;
+  border-right: 1px solid rgb(224, 224, 224);
+}
+:local(.urlsShort) {
+  @include span(4);
+  padding : 1em 1em;
+}
+:local(.urlsRow) {
+  @include span(12);
+}

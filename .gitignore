@@ -1,0 +1,8 @@
+build
+data
+**/*.pb.go
+services/*/grpc
+services/*/node_modules
+**/*.swp
+**/*.swo
+**/.vscode

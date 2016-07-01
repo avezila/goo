@@ -6,7 +6,6 @@ var devFlagPlugin = new webpack.DefinePlugin({
 });
 var precss       = require('precss');
 var autoprefixer = require('autoprefixer');
-var InlineEnviromentVariablesPlugin = require('inline-environment-variables-webpack-plugin');
  
 
 

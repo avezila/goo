@@ -1,17 +1,16 @@
 package goo
 
 import (
-	"fmt"
-
 	"github.com/PuerkitoBio/purell"
-	"github.com/iris-contrib/middleware/cors"
-	"github.com/kataras/iris"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/engine/fasthttp"
+	"github.com/labstack/echo/middleware"
 )
 
 type Goo struct {
 	urls  map[string]string
 	hashs map[string]string
-	iris  *iris.Framework
+	echo  *echo.Echo
 	len   int
 }
 
@@ -19,45 +18,57 @@ func New() (*Goo, error) {
 	g := &Goo{
 		urls:  make(map[string]string),
 		hashs: make(map[string]string),
-		iris:  iris.New(),
+		echo:  echo.New(),
 		len:   1,
 	}
 
-	g.iris.Use(cors.Default())
-	g.iris.Post("/putUrl", g.Put)
-	g.iris.Get("/:hash", g.Get)
+	g.echo.Use(middleware.Logger())
+	g.echo.Use(middleware.Recover())
+
+	g.echo.Use(middleware.CORSWithConfig(middleware.CORSConfig{}))
+
+	g.echo.POST("/putUrl", g.Put)
+	g.echo.GET("/:hash", g.Get)
 	return g, nil
 }
 
-func (g *Goo) Start(addr string) {
-	g.iris.Listen(addr)
+func (g *Goo) Run(addr string) {
+	g.echo.Run(fasthttp.New(addr))
 }
 
-func (g *Goo) Stop() {
-	g.iris.Close()
-}
-
-func (g *Goo) Get(ctx *iris.Context) {
+func (g *Goo) Get(ctx echo.Context) error {
 	hash := ctx.Param("hash")
-	fmt.Println(hash)
 	url, ok := g.urls[hash]
 	if ok {
-		ctx.Redirect(url, 301)
-		return
+		ctx.Redirect(301, url)
+		return nil
 	}
-	ctx.EmitError(404)
+	ctx.NoContent(404)
+	return nil
 }
 
-func (g *Goo) Put(ctx *iris.Context) {
-	url := string(ctx.Request.Body())
+func (g *Goo) Put(ctx echo.Context) error {
+	req := ctx.Request()
+	res := ctx.Response()
+	len := req.ContentLength()
+	if len > 1024*1024 {
+		res.WriteHeader(403)
+		res.Write([]byte("Too long url"))
+		return nil
+	}
+	buf := make([]byte, len)
+	if _, err := req.Body().Read(buf); err != nil {
+		res.WriteHeader(500)
+		return nil
+	}
+	url := string(buf)
 	if pureURL, err := purell.NormalizeURLString(url, purell.FlagsSafe); err == nil {
 		url = pureURL
 	}
-	fmt.Println(url)
 	hash, ok := g.hashs[url]
 	if ok {
-		ctx.WriteString(hash)
-		return
+		res.Write([]byte(hash))
+		return nil
 	}
 	for {
 		hash = RandString(g.len)
@@ -68,5 +79,6 @@ func (g *Goo) Put(ctx *iris.Context) {
 	}
 	g.urls[hash] = url
 	g.hashs[url] = hash
-	ctx.WriteString(hash)
+	res.Write([]byte(hash))
+	return nil
 }

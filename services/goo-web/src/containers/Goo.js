@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import bootstrap from './Bootstrap.css';
 import styles from './Goo.scss';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -74,12 +75,12 @@ export default class Goo extends Component {
                 autoFocus="true"
               />
             </div>
-            <RaisedButton 
-              secondary={true} 
-              className={styles.inputSubmit} 
-              label="Shorten URL" 
-              backgroundColor="#a4c639" 
-              onTouchEnd={this.onSubmit.bind(this)} 
+            <RaisedButton
+              secondary={true}
+              className={styles.inputSubmit}
+              label="Shorten URL"
+              backgroundColor="#a4c639"
+              onTouchEnd={this.onSubmit.bind(this)}
               onClick={this.onSubmit.bind(this)} />
           </Paper>
           { this.renderShortened() }

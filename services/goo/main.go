@@ -1,21 +1,18 @@
 package main
 
 import (
-	"fmt"
-	"runtime"
-	"time"
+	"os"
 
 	"./goo"
 )
 
 func main() {
-	g, _ := goo.New()
-	go func() {
-		for {
-			time.Sleep(time.Second * 10)
-			fmt.Println(runtime.NumGoroutine())
-		}
-	}()
-	g.Start("127.0.0.1:5354")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "5354"
+	}
+	port = ":" + port
 
+	g, _ := goo.New()
+	g.Run(port)
 }

@@ -1,4 +1,4 @@
-FROM        nuagebec/ubuntu
+FROM        scratch
 
 ADD         ./app /app
 

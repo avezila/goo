@@ -1,39 +1,25 @@
 version : '2'
 
 services:
-  saver:
-    image : avezila/saver
-    ports:
-      - "5353:5353"
-    depends_on:
-      - saver-mongo
-    links:
-      - saver-mongo
-    volumes:
-      - ../data/saver:/data
-  proxy:
-    image : avezila/saver-proxy
-    ports:
-      - "5354:5354"
-    depends_on:
-      - saver
-    links:
-      - saver
-    volumes:
-      - ../data/proxy:/data
-  saver-mongo:
-    image: avezila/saver-mongo
-    volumes:
-      - ../data/saver-mongo:/data/db
-  saver-client:
+  goo:
+    image : avezila/goo
+    environment:
+      - PORT=5354
+  goo-web:
+    image : avezila/goo-web
+    environment:
+      - SERVER=https://goo.com
+      - PORT=3000
+  saver-web:
     image: avezila/saver-client
+  goo-nginx:
+    image: avezila/goo-nginx
     ports:
-      - "3000:3000"
-    depends_on:
-      - saver
-      - proxy
+      - "80:80"
+      - "443:443"
     links:
-      - saver
-      - proxy
+      - goo
+      - goo-web
+      - saver-web
     volumes:
-      - ../data/saver-client:/usr/src/app/data
+      - ./ssl:/ssl

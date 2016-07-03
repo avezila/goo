@@ -1,1 +1,1 @@
-db.bytes.ensureIndex({id:1},{unique:true});
+db.urls.ensureIndex({hash:1},{unique:true});

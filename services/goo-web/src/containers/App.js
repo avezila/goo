@@ -17,7 +17,6 @@ import * as reducers from '../reducers';
 
 function lsSlicer (paths) {
   return (state) => {
-    console.log(state)
     let subset = {
       goo : {
         rows  : state.goo.rows
@@ -32,8 +31,6 @@ const enhancer = compose(
   persistState("redux",{slicer:lsSlicer}),
 )
 
-//let createStore = compose(
-//)();
 
 const reducer = combineReducers(reducers);
 const store = initStore(

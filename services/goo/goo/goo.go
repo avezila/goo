@@ -5,6 +5,8 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/fasthttp"
 	"github.com/labstack/echo/middleware"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type Goo struct {
@@ -12,14 +14,34 @@ type Goo struct {
 	hashs map[string]string
 	echo  *echo.Echo
 	len   int
+	db    *mgo.Collection
 }
 
 func New() (*Goo, error) {
+	session, err := mgo.Dial("goo-mongo")
+	if err != nil {
+		return nil, err
+	}
+
 	g := &Goo{
 		urls:  make(map[string]string),
 		hashs: make(map[string]string),
 		echo:  echo.New(),
 		len:   1,
+		db:    session.DB("goo").C("urls"),
+	}
+	res := []struct {
+		Url  string
+		Hash string
+	}{}
+
+	if err := g.db.Find(bson.M{}).Select(bson.M{"hash": 1, "url": 1}).All(&res); err != nil {
+		return nil, err
+	}
+
+	for _, row := range res {
+		g.urls[row.Hash] = row.Url
+		g.urls[row.Url] = row.Hash
 	}
 
 	g.echo.Use(middleware.Logger())
@@ -43,22 +65,20 @@ func (g *Goo) Get(ctx echo.Context) error {
 		ctx.Redirect(301, url)
 		return nil
 	}
-	ctx.NoContent(404)
+	ctx.String(404, "404: Not found.")
 	return nil
 }
 
 func (g *Goo) Put(ctx echo.Context) error {
 	req := ctx.Request()
-	res := ctx.Response()
 	len := req.ContentLength()
 	if len > 1024*1024 {
-		res.WriteHeader(403)
-		res.Write([]byte("Too long url"))
+		ctx.String(403, "Too long url")
 		return nil
 	}
 	buf := make([]byte, len)
 	if _, err := req.Body().Read(buf); err != nil {
-		res.WriteHeader(500)
+		ctx.String(500, err.Error())
 		return nil
 	}
 	url := string(buf)
@@ -67,7 +87,7 @@ func (g *Goo) Put(ctx echo.Context) error {
 	}
 	hash, ok := g.hashs[url]
 	if ok {
-		res.Write([]byte(hash))
+		ctx.String(200, hash)
 		return nil
 	}
 	for {
@@ -77,8 +97,12 @@ func (g *Goo) Put(ctx echo.Context) error {
 		}
 		g.len++
 	}
+	if err := g.db.Insert(bson.M{"hash": hash, "url": url}); err != nil {
+		ctx.String(500, "error writing row "+err.Error())
+		return nil
+	}
 	g.urls[hash] = url
 	g.hashs[url] = hash
-	res.Write([]byte(hash))
+	ctx.String(200, hash)
 	return nil
 }

@@ -5,12 +5,6 @@ var precss       = require('precss');
 var autoprefixer = require('autoprefixer');
 var OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
-var zlib = require('zlib');
-var CompressionPlugin = require("compression-webpack-plugin");
-
-function gzipMaxCompression(buffer, done) {
-  return zlib.gzip(buffer, { level: 9 }, done)
-}
 
 module.exports = {
   entry: [
@@ -34,16 +28,11 @@ module.exports = {
      assetNameRegExp: /\.css$/g,
      cssProcessor: require('cssnano'),
      cssProcessorOptions: { discardComments: {removeAll: true } },
-     canPrint: true
+     canPrint: false
     }),
     new webpack.optimize.UglifyJsPlugin(),
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.optimize.DedupePlugin(),
-		new CompressionPlugin({
-    	algorithm: gzipMaxCompression,
-      regExp: /\.(js|html)$/,
-      minRatio: 0
-    })
   ],
   module: {
     loaders: [

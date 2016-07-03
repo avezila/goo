@@ -1,6 +1,6 @@
 FROM        scratch
 
-ADD         ./app /app
+COPY         ./app /app
 
 EXPOSE 5354
 

@@ -1,0 +1,25 @@
+[Unit]
+Description=Dockerized Goo Service
+After=docker.service
+BindsTo=docker.service
+Conflicts=shutdown.target reboot.target halt.target
+
+[Service]
+TimeoutStartSec=0
+TimeoutStopSec=30
+Restart=always
+RestartSec=10
+ExecStartPre=-/usr/local/bin/docker-compose -p goo kill 
+ExecStartPre=-/usr/local/bin/docker-compose -p goo rm 
+ExecStartPre=-/usr/local/bin/docker-compose -p goo rm -f
+ExecStart=/usr/local/bin/docker-compose -p goo up --force-recreate --no-deps
+ExecStop=/usr/local/bin/docker-compose -p goo stop
+WorkingDirectory=/home/avezila/goo/deploy
+StandardOutput=journal
+SyslogIdentifier=goo
+User=avezila
+Group=avezila
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

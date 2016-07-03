@@ -1,0 +1,27 @@
+version : '2'
+
+services:
+  goo:
+    image : avezila/goo
+    environment:
+      - PORT=5354
+    links :
+      - goo-mongo
+  goo-mongo:
+    image : avezila/goo-mongo
+    volumes :
+      - ./runtime/mongo:/data
+  goo-web:
+    image : avezila/goo-web
+    environment:
+      - SERVER=http://localhost:3000
+      - PORT=3000
+  goo-nginx:
+    image: nginx
+    ports:
+      - "3000:80"
+    links:
+      - goo
+      - goo-web
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf

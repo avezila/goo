@@ -1,6 +1,6 @@
 FROM       mongo
 
-ADD ./mongo /setup
+ADD . /setup
 
 ENTRYPOINT ["/setup/entrypoint.sh"]
 

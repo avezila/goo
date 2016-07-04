@@ -1,14 +1,14 @@
-### Test Saver service - for save bin data by id
+### Just another url shortener
 
 #### For start
 * Install docker-engine:
   https://docs.docker.com/engine/installation/linux/fedora/
 * Install docker-compose: 
   https://docs.docker.com/compose/install/
-* Then run ```./deploy/compose.sh up```
-* Now you can open http://127.0.0.1:3000/ and check
+* Then run ```cd deploy/localhost && docker-compose up```
+* Now you can open http://localhost:3000/ and check
 
 #### Build:
-* install node, go compiler, protobuf, grpc, go plugins for grpc, protobufjs from npm for pbjs
-* then run ```./deploy/build-saver.sh```
-* or make your compose config and others.
+* install go compiler
+* then run ```./deploy/build.sh```
+  this will create local docker images avezila/goo avezila/goo-web avezila/goo-mongo

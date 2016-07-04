@@ -10,5 +10,6 @@
 
 #### Build:
 * install go compiler
-* then run ```./deploy/build.sh```
+* then run 
+  ```./deploy/build.sh```  
   this will create local docker images avezila/goo avezila/goo-web avezila/goo-mongo

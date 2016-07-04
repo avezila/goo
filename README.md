@@ -1,6 +1,6 @@
 ### Just another url shortener
 
-#### Look at goo.avezila.com
+#### Look at https://goo.avezila.com
 
 #### For start
 * Install docker-engine:

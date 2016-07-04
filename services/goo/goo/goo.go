@@ -41,7 +41,7 @@ func New() (*Goo, error) {
 
 	for _, row := range res {
 		g.urls[row.Hash] = row.Url
-		g.urls[row.Url] = row.Hash
+		g.hashs[row.Url] = row.Hash
 	}
 
 	g.echo.Use(middleware.Logger())

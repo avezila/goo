@@ -1,8 +1,8 @@
 ### Just another url shortener
 
-#### Look at https://goo.avezila.com
+##### Look at https://goo.avezila.com
 
-#### For start
+##### For start
 * Install docker-engine:
   https://docs.docker.com/engine/installation/linux/fedora/
 * Install docker-compose: 
@@ -10,7 +10,7 @@
 * Then run ```cd deploy/localhost && docker-compose up```
 * Now you can open http://localhost:3000/ and check
 
-#### Build:
+##### Build:
 * install go compiler
 * then run 
   ```./deploy/build.sh```  

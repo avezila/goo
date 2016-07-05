@@ -10,11 +10,9 @@ import (
 )
 
 type Goo struct {
-	urls  map[string]string
-	hashs map[string]string
-	echo  *echo.Echo
-	len   int
-	db    *mgo.Collection
+	echo   *echo.Echo
+	db     *mgo.Collection
+	hasher *Hasher
 }
 
 func New() (*Goo, error) {
@@ -24,12 +22,11 @@ func New() (*Goo, error) {
 	}
 
 	g := &Goo{
-		urls:  make(map[string]string),
-		hashs: make(map[string]string),
-		echo:  echo.New(),
-		len:   1,
-		db:    session.DB("goo").C("urls"),
+		echo:   echo.New(),
+		db:     session.DB("goo").C("urls"),
+		hasher: NewHasher(),
 	}
+
 	res := []struct {
 		Url  string
 		Hash string
@@ -40,8 +37,7 @@ func New() (*Goo, error) {
 	}
 
 	for _, row := range res {
-		g.urls[row.Hash] = row.Url
-		g.hashs[row.Url] = row.Hash
+		g.hasher.Set(row.Hash, row.Url)
 	}
 
 	g.echo.Use(middleware.Logger())
@@ -51,17 +47,20 @@ func New() (*Goo, error) {
 
 	g.echo.POST("/putUrl", g.Put)
 	g.echo.GET("/:hash", g.Get)
+
 	return g, nil
 }
 
 func (g *Goo) Run(addr string) {
+	g.hasher.Start()
+	defer g.hasher.Stop()
 	g.echo.Run(fasthttp.New(addr))
 }
 
 func (g *Goo) Get(ctx echo.Context) error {
 	hash := ctx.Param("hash")
-	url, ok := g.urls[hash]
-	if ok {
+	url := g.hasher.Get(hash)
+	if url != "" {
 		ctx.Redirect(301, url)
 		return nil
 	}
@@ -85,24 +84,14 @@ func (g *Goo) Put(ctx echo.Context) error {
 	if pureURL, err := purell.NormalizeURLString(url, purell.FlagsSafe); err == nil {
 		url = pureURL
 	}
-	hash, ok := g.hashs[url]
-	if ok {
-		ctx.String(200, hash)
-		return nil
-	}
-	for {
-		hash = RandString(g.len)
-		if _, ok = g.urls[hash]; !ok {
-			break
+	hash, exists := g.hasher.Insert(url)
+	if !exists {
+		if err := g.db.Insert(bson.M{"hash": hash, "url": url}); err != nil {
+			g.hasher.Delete(hash)
+			ctx.String(500, "error writing db "+err.Error())
+			return err
 		}
-		g.len++
 	}
-	if err := g.db.Insert(bson.M{"hash": hash, "url": url}); err != nil {
-		ctx.String(500, "error writing row "+err.Error())
-		return nil
-	}
-	g.urls[hash] = url
-	g.hashs[url] = hash
 	ctx.String(200, hash)
 	return nil
 }

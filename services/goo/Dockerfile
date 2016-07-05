@@ -1,4 +1,4 @@
-FROM        ubuntu
+FROM        scratch
 
 COPY         ./app /app
 

@@ -28,10 +28,10 @@ export function sendUrlForShort(url) {
   if (!url.match(/^\w+\:\//) && !url.match(/^http/))
     url = "http://"+url;
   return function(dispatch) {
-    var xhr = createCORSRequest("POST", SERVER+"/putUrl");
+    var xhr = createCORSRequest("POST", window.location.href+"putUrl");
     xhr.onload = function() {
       if (xhr.status === 200) {
-          dispatch(receiveShortenUrl(url,SERVER+"/"+xhr.responseText));
+          dispatch(receiveShortenUrl(url,window.location.href+xhr.responseText));
       }
     };
     xhr.send(url);

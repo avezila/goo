@@ -4,7 +4,7 @@ services:
   goo:
     image : avezila/goo
     environment:
-      - PORT=5354
+      - PORT=80
     links :
       - goo-mongo
   goo-mongo:
@@ -14,12 +14,12 @@ services:
   goo-web:
     image : avezila/goo-web
     environment:
-      - SERVER=http://localhost:3000
-      - PORT=3000
+      - SERVER=http://docker
+      - PORT=80
   goo-nginx:
     image: nginx
     ports:
-      - "3000:80"
+      - "80:80"
     links:
       - goo
       - goo-web

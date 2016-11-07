@@ -1,0 +1,9 @@
+---
+name: avezila-goo
+blurb: 80 avezila goo
+description: goo.gl like simple demo on golang  
+email: thepioh@zoho.com
+repo_url: http://github.com/avezila/goo
+tags: avezila,goo,go
+private: false
+cmd: cd deploy/localhost && docker-compose up

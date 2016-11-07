@@ -19,7 +19,7 @@ services:
   goo-nginx:
     image: nginx
     ports:
-      - "80:80"
+      - "3000:80"
     links:
       - goo
       - goo-web
